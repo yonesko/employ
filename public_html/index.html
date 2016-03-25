@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>PING PONG</title>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery-json/2.5.1/jquery.json.min.js"></script>
+    <script>
+        function sendAjax() {
+            var cmd = {};
+            cmd.userId = $('#userId').val();
+
+            $.ajax({
+                url: "handler",
+                type: 'POST',
+                dataType: 'json',
+                data: JSON.stringify(cmd),
+                contentType: 'application/json',
+                mimeType: 'application/json',
+                success: function (data) {
+                    $("#result").val(data);
+                }
+            });
+        }
+    </script>
+
+</head>
+<body>
+
+
+<label for="userId">userId: </label>
+<input id="userId" type="text">
+
+<p>
+    <button type="button" onclick="sendAjax()">Add</button>
+</p>
+
+<input id="result" disabled="disabled"/>
+
+</body>
+</html>
