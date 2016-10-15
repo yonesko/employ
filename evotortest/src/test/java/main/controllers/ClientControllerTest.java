@@ -6,9 +6,7 @@ import main.model.messages.Extra;
 import main.model.messages.Request;
 import main.model.messages.Response;
 import main.model.messages.ResultCode;
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +19,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
@@ -42,11 +39,7 @@ public class ClientControllerTest {
     @Autowired
     private CustomerDAO customerDAO;
 
-    private RestTemplate restTemplate = new RestTemplate();
-
-    private Request badReqTypeReq = new Request(null,
-            new Extra("Oleg", Extra.Attr.LOGIN),
-            new Extra("P2$$W0гD", Extra.Attr.PASS));
+    private Request badReqTypeReq = new Request(null);
 
     private Request olegRegReq = new Request(Request.Types.CREATE_AGT,
             new Extra("Oleg", Extra.Attr.LOGIN),
@@ -90,69 +83,35 @@ public class ClientControllerTest {
     @Test
     public void handleCustomerReg() throws Exception {
         clean();
-        mockMvc.perform(post(CUSTOMER_ENDPOINT)
-                .contentType(MediaType.APPLICATION_XML)
-                .content(toXml(olegRegReq)))
-                .andExpect(status().isOk())
-                .andExpect(content().xml(toXml(respOK)));
 
-        mockMvc.perform(post(CUSTOMER_ENDPOINT)
-                .contentType(MediaType.APPLICATION_XML)
-                .content(toXml(olegRegReq)))
-                .andExpect(status().isOk())
-                .andExpect(content().xml(toXml(respUserAlreadyExists)));
+        requestAndExpect(olegRegReq, respOK);
+
+        requestAndExpect(olegRegReq, respUserAlreadyExists);
     }
 
     @Test
     public void handleCustomerBalance() throws Exception {
         clean();
-        mockMvc.perform(post(CUSTOMER_ENDPOINT)
-                .contentType(MediaType.APPLICATION_XML)
-                .content(toXml(olegRegReq)))
-                .andExpect(status().isOk())
-                .andExpect(content().xml(toXml(respOK)));
+        requestAndExpect(olegRegReq, respOK);
 
-        mockMvc.perform(post(CUSTOMER_ENDPOINT)
-                .contentType(MediaType.APPLICATION_XML)
-                .content(toXml(olegPass1BalanceReq)))
-                .andExpect(status().isOk())
-                .andExpect(content().xml(toXml(respOKZeroBalance)));
+        requestAndExpect(olegPass1BalanceReq, respOKZeroBalance);
 
-        mockMvc.perform(post(CUSTOMER_ENDPOINT)
-                .contentType(MediaType.APPLICATION_XML)
-                .content(toXml(olegPass2BalanceReq)))
-                .andExpect(status().isOk())
-                .andExpect(content().xml(toXml(respIncorrectPassword)));
+        requestAndExpect(olegPass2BalanceReq, respIncorrectPassword);
 
-        mockMvc.perform(post(CUSTOMER_ENDPOINT)
-                .contentType(MediaType.APPLICATION_XML)
-                .content(toXml(karlBalanceReq)))
-                .andExpect(status().isOk())
-                .andExpect(content().xml(toXml(respNoSuchUser)));
+        requestAndExpect(karlBalanceReq, respNoSuchUser);
     }
 
-    @Test@Ignore
+    @Test
     public void handleCustomerError() throws Exception {
-        Response response;
-
         customerDAO.dropTale();
 
-        mockMvc.perform(post(CUSTOMER_ENDPOINT)
-                .contentType(MediaType.APPLICATION_XML)
-                .content(toXml(olegRegReq)))
-                .andExpect(status().isOk())
-                .andExpect(content().xml(toXml(respInternalError)));
-
+        requestAndExpect(olegRegReq, respInternalError);
 
         customerDAO.reCreateTable();
+
+        requestAndExpect(badReqTypeReq, respInternalError);
     }
 
-    private Response makeRequest(Request request) {
-        return restTemplate.postForObject(
-                CUSTOMER_ENDPOINT,
-                request,
-                Response.class);
-    }
     private String toXml(Object o) throws IOException {
         MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
         this.mappingJackson2HttpMessageConverter.write(
@@ -165,7 +124,7 @@ public class ClientControllerTest {
                 .contentType(MediaType.APPLICATION_XML)
                 .content(toXml(request)))
                 .andExpect(status().isOk())
-                .andExpect(content().xml(toXml(request)));
+                .andExpect(content().xml(toXml(response)));
     }
 
 }
