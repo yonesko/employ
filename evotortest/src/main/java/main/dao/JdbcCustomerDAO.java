@@ -23,7 +23,6 @@ public class JdbcCustomerDAO implements CustomerDAO {
 
     public static CustomerRowMapper rowMapper = new CustomerRowMapper();
 
-
     JdbcTemplate jdbcTemplate;
 
     @Autowired
