@@ -32,9 +32,7 @@ public class JdbcCustomerDAO implements CustomerDAO {
     }
 
     public List<Customer> getAll() {
-        return jdbcTemplate.query(
-                SELECT_ALL,
-                new CustomerRowMapper());
+        return jdbcTemplate.query(SELECT_ALL, rowMapper);
     }
 
     public void insertCustomer(Customer customer) {
@@ -49,9 +47,7 @@ public class JdbcCustomerDAO implements CustomerDAO {
     public Customer getCustomer(String login) {
         List<Customer> l = jdbcTemplate.query(SELECT_BY_LOGIN, rowMapper, login);
 
-        if (l.size() > 0)
-            return l.get(0);
-        return null;
+        return l.size() > 0 ? l.get(0) : null;
     }
 
     @Override

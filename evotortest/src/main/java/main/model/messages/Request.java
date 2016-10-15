@@ -43,10 +43,10 @@ public class Request implements Serializable {
         this.extra = extra;
     }
 
-    public Extra getByAttr(Extra.Attr name) {//TODO to map?
+    public String getValue(Extra.Attr name) {
         for (Extra e : extra)
             if (e.getName().equals(name))
-                return e;
+                return e.getValue();
         return null;
     }
 
