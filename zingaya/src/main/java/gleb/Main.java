@@ -64,18 +64,14 @@ class Chessman implements Runnable {
 
     private void makeStep() throws InterruptedException {
         while (true) {
+            long start = System.currentTimeMillis();
             int to = chooseTarget();
-            int newCur = board.tryMakeStep(cur, to);
-            if (newCur >= 0) {
-                cur = newCur;
-                return;
-            } else {
-                Thread.sleep(5000);
-            }
-            newCur = board.tryMakeStep(cur, to);
-            if (newCur >= 0) {
-                cur = newCur;
-                return;
+            while (true) {
+                if (System.currentTimeMillis() - start >= 5000) break;
+                if (board.tryMakeStep(cur, to)) {
+                    cur = to;
+                    return;
+                }
             }
         }
     }
@@ -85,6 +81,7 @@ class Chessman implements Runnable {
         for (int i = 0; i < 50; i++) {
             try {
                 if (i % 2 == 0) Thread.sleep(250);
+                board.wait();
                 makeStep();
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -138,26 +135,26 @@ class Board {
         }
     }
 
-    synchronized int tryMakeStep(int from, int to) {
+    synchronized boolean tryMakeStep(int from, int to) {
         Pos fromPos = indToPos(from), toPos = indToPos(to);
 
-        if (fromPos.r != toPos.r && fromPos.c != toPos.c) return -1;
-        if (from == to) return -1;
+        if (fromPos.r != toPos.r && fromPos.c != toPos.c) return false;
+        if (from == to) return false;
 
         if (fromPos.r == toPos.r)
             for (int c = min(fromPos.c, toPos.c); c <= Math.max(fromPos.c, toPos.c); c++)
                 if (chessmen.get(posToInd(fromPos.r, c)) && c != fromPos.c)
-                    return -1;
+                    return false;
 
         if (fromPos.c == toPos.c)
             for (int r = min(fromPos.r, toPos.r); r <= Math.max(fromPos.r, toPos.r); r++)
                 if (chessmen.get(posToInd(r, fromPos.c)) && r != fromPos.r)
-                    return -1;
+                    return false;
 
         chessmen.set(from, false);
         chessmen.set(to);
         print(from);
-        return to;
+        return true;
     }
 
     List<Integer> getChessmen() {
@@ -176,7 +173,8 @@ class Board {
             sb.append(r);
             for (int c = 0; c < COLS; c++) {
                 sb.append('|');
-                if (chessmen.get(posToInd(r, c))) sb.append(posToInd(r, c));
+                if (chessmen.get(posToInd(r, c)))
+                    sb.append(posToInd(r, c) < 10 ? " " + posToInd(r, c) : posToInd(r, c));
                 else if (mark == posToInd(r, c)) sb.append("fr");
                 else sb.append("  ");
             }
