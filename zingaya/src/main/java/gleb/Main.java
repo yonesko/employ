@@ -5,6 +5,7 @@ import java.util.BitSet;
 import java.util.List;
 import java.util.Random;
 
+import static gleb.Main.NUM;
 import static gleb.Util.indToPos;
 import static gleb.Util.posToInd;
 import static java.lang.Math.floor;
@@ -17,25 +18,21 @@ public class Main {
         ArrayList<Thread> threads = new ArrayList<>();
 
         Board board = new Board();
-        board.print(-1);
+        board.print();
 
         for (int i : board.getChessmen()) threads.add(new Thread(new Chessman(board, i)));
-
-        long start = System.nanoTime();
 
         for (Thread thread : threads) thread.start();
 
         for (Thread thread : threads) thread.join();
-
-        System.out.println("time: " + (System.nanoTime() - start) / 1e9 + " sec");
     }
 }
 
 class Chessman implements Runnable {
     private int cur;
-    private Board board;
+    private final Board board;
 
-    public Chessman(Board board, int cur) {
+    Chessman(Board board, int cur) {
         this.board = board;
         this.cur = cur;
     }
@@ -46,13 +43,16 @@ class Chessman implements Runnable {
 
         for (int i = 0; i < Board.COLS; i++) {
             int ind = posToInd(pos.r, i);
-            if (ind != cur) possible.add(ind);
+            if (ind != cur)
+                possible.add(ind);
         }
 
         for (int i = 0; i < Board.ROWS; i++) {
             int ind = posToInd(i, pos.c);
-            if (ind != cur) possible.add(ind);
+            if (ind != cur)
+                possible.add(ind);
         }
+
 
         possible.remove(Integer.valueOf(cur));
 
@@ -61,15 +61,22 @@ class Chessman implements Runnable {
 
     private void makeStep() throws InterruptedException {
         while (true) {
-            long start = System.currentTimeMillis();
             int to = chooseTarget();
-            while (true) {
-                if (System.currentTimeMillis() - start >= 5000) break;
-                if (board.tryMakeStep(cur, to)) {
-                    cur = to;
-                    return;
+            synchronized (board) {
+                try {
+                    if (board.tryMakeStep(cur, to)) {
+                        cur = to;
+                        return;
+                    } else {
+                        board.wait(5000);
+                        if (board.tryMakeStep(cur, to)) {
+                            cur = to;
+                            return;
+                        }
+                    }
+                } finally {
+                    board.notify();
                 }
-                Thread.sleep(1);
             }
         }
     }
@@ -125,14 +132,14 @@ class Board {
             possible.add(i);
         }
 
-        for (int i = 0; i < Main.NUM; i++) {
+        for (int i = 0; i < NUM; i++) {
             int ind = Util.randInt(possible.size());
             chessmen.set(possible.get(ind));
             possible.remove(ind);
         }
     }
 
-    synchronized boolean tryMakeStep(int from, int to) {
+    boolean tryMakeStep(int from, int to) {
         Pos fromPos = indToPos(from), toPos = indToPos(to);
 
         if (fromPos.r != toPos.r && fromPos.c != toPos.c) return false;
@@ -150,7 +157,9 @@ class Board {
 
         chessmen.set(from, false);
         chessmen.set(to);
-        print(from);
+        assert to != from;
+        assert chessmen.cardinality() == NUM;
+        print(from, to);
         return true;
     }
 
@@ -162,26 +171,29 @@ class Board {
         return ret;
     }
 
-    public void print(int mark) {
+    void print() {
+        print(-1, -1);
+    }
+
+    void print(int from, int to) {
         StringBuilder sb = new StringBuilder();
         char rook = '♜';
 
         for (int r = ROWS - 1; r >= 0; r--) {
             sb.append(r);
-            for (int c = 0; c < COLS; c++) {
+            for (int ind, c = 0; c < COLS; c++) {
+                ind = posToInd(r, c);
                 sb.append('|');
-                if (chessmen.get(posToInd(r, c)))
-                    sb.append(posToInd(r, c) < 10 ? " " + posToInd(r, c) : posToInd(r, c));
-                else if (mark == posToInd(r, c)) sb.append("..");
+                if (ind == to) sb.append("\u001B[31m").append(to < 10 ? " " + to : to).append("\u001B[0m");
+                else if (chessmen.get(ind)) sb.append(ind < 10 ? " " + ind : ind);
+                else if (ind == from) sb.append("\u001B[47m").append(from < 10 ? " " + from : from).append("\u001B[0m");
                 else sb.append("  ");
             }
             sb.append('|').append(r).append('\n');
 
         }
         sb.append("  ");
-        for (int i = 0; i < COLS; i++) {
-            sb.append(i).append("  ");
-        }
+        for (int i = 0; i < COLS; i++) sb.append(i).append("  ");
 
         System.out.println(sb.toString());
     }
