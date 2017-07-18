@@ -25,8 +25,6 @@ public class Main {
         for (Thread thread : threads) thread.start();
 
         for (Thread thread : threads) thread.join();
-
-        System.out.println(T.n);
     }
 }
 
@@ -34,7 +32,7 @@ class Chessman implements Runnable {
     private int cur;
     private final Board board;
 
-    public Chessman(Board board, int cur) {
+    Chessman(Board board, int cur) {
         this.board = board;
         this.cur = cur;
     }
@@ -83,29 +81,6 @@ class Chessman implements Runnable {
         }
     }
 
-//    private void makeStep() throws InterruptedException {
-//        while (true) {
-//            long start = T.currentTimeMillis();
-//            int to = chooseTarget();
-//            while (true) {
-//                if (T.currentTimeMillis() - start >= 5000) break;
-//                synchronized (board) {
-//                    while (!board.free) board.wait();
-//                    board.free = false;
-//                    try {
-//                        if (board.tryMakeStep(cur, to)) {
-//                            cur = to;
-//                            return;
-//                        }
-//                    } finally {
-//                        board.free = true;
-//                        board.notify();
-//                    }
-//                }
-//            }
-//        }
-//    }
-
     @Override
     public void run() {
         for (int i = 0; i < 50; i++) {
@@ -117,16 +92,6 @@ class Chessman implements Runnable {
             }
         }
     }
-}
-
-class T {
-    static volatile int n = 0;
-
-    static long currentTimeMillis() {
-        n++;
-        return System.currentTimeMillis();
-    }
-
 }
 
 class Pos {
@@ -158,7 +123,6 @@ class Util {
 class Board {
     final static int ROWS = 8;
     final static int COLS = 8;
-    volatile boolean free = true;
 
     private BitSet chessmen = new BitSet();
 
@@ -220,9 +184,9 @@ class Board {
             for (int ind, c = 0; c < COLS; c++) {
                 ind = posToInd(r, c);
                 sb.append('|');
-                if (ind == to) sb.append("\u001B[34m").append(to < 10 ? " " + to : to).append("\u001B[0m");
+                if (ind == to) sb.append("\u001B[31m").append(to < 10 ? " " + to : to).append("\u001B[0m");
                 else if (chessmen.get(ind)) sb.append(ind < 10 ? " " + ind : ind);
-                else if (ind == from) sb.append("..");
+                else if (ind == from) sb.append("\u001B[47m").append(from < 10 ? " " + from : from).append("\u001B[0m");
                 else sb.append("  ");
             }
             sb.append('|').append(r).append('\n');
