@@ -5,6 +5,7 @@ import java.util.BitSet;
 import java.util.List;
 import java.util.Random;
 
+import static gleb.Main.NUM;
 import static gleb.Util.indToPos;
 import static gleb.Util.posToInd;
 import static java.lang.Math.floor;
@@ -21,19 +22,15 @@ public class Main {
 
         for (int i : board.getChessmen()) threads.add(new Thread(new Chessman(board, i)));
 
-        long start = System.nanoTime();
-
         for (Thread thread : threads) thread.start();
 
         for (Thread thread : threads) thread.join();
-
-        System.out.println("time: " + (System.nanoTime() - start) / 1e9 + " sec");
     }
 }
 
 class Chessman implements Runnable {
     private int cur;
-    private Board board;
+    private final Board board;
 
     public Chessman(Board board, int cur) {
         this.board = board;
@@ -68,9 +65,18 @@ class Chessman implements Runnable {
             int to = chooseTarget();
             while (true) {
                 if (System.currentTimeMillis() - start >= 5000) break;
-                if (board.tryMakeStep(cur, to)) {
-                    cur = to;
-                    return;
+                synchronized (board) {
+                    while (!board.free) board.wait();
+                    board.free = false;
+                    try {
+                        if (board.tryMakeStep(cur, to)) {
+                            cur = to;
+                            return;
+                        }
+                    } finally {
+                        board.free = true;
+                        board.notify();
+                    }
                 }
             }
         }
@@ -81,7 +87,6 @@ class Chessman implements Runnable {
         for (int i = 0; i < 50; i++) {
             try {
                 if (i % 2 == 0) Thread.sleep(250);
-                board.wait();
                 makeStep();
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -119,6 +124,7 @@ class Util {
 class Board {
     final static int ROWS = 8;
     final static int COLS = 8;
+    volatile boolean free = true;
 
     private BitSet chessmen = new BitSet();
 
@@ -128,14 +134,14 @@ class Board {
             possible.add(i);
         }
 
-        for (int i = 0; i < Main.NUM; i++) {
+        for (int i = 0; i < NUM; i++) {
             int ind = Util.randInt(possible.size());
             chessmen.set(possible.get(ind));
             possible.remove(ind);
         }
     }
 
-    synchronized boolean tryMakeStep(int from, int to) {
+    boolean tryMakeStep(int from, int to) {
         Pos fromPos = indToPos(from), toPos = indToPos(to);
 
         if (fromPos.r != toPos.r && fromPos.c != toPos.c) return false;
@@ -153,6 +159,8 @@ class Board {
 
         chessmen.set(from, false);
         chessmen.set(to);
+        assert to != from;
+        assert chessmen.cardinality() == NUM;
         print(from);
         return true;
     }
@@ -175,7 +183,7 @@ class Board {
                 sb.append('|');
                 if (chessmen.get(posToInd(r, c)))
                     sb.append(posToInd(r, c) < 10 ? " " + posToInd(r, c) : posToInd(r, c));
-                else if (mark == posToInd(r, c)) sb.append("fr");
+                else if (mark == posToInd(r, c)) sb.append("..");
                 else sb.append("  ");
             }
             sb.append('|').append(r).append('\n');
