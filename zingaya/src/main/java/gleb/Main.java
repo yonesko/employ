@@ -18,13 +18,15 @@ public class Main {
         ArrayList<Thread> threads = new ArrayList<>();
 
         Board board = new Board();
-        board.print(-1);
+        board.print();
 
         for (int i : board.getChessmen()) threads.add(new Thread(new Chessman(board, i)));
 
         for (Thread thread : threads) thread.start();
 
         for (Thread thread : threads) thread.join();
+
+        System.out.println(T.n);
     }
 }
 
@@ -61,26 +63,48 @@ class Chessman implements Runnable {
 
     private void makeStep() throws InterruptedException {
         while (true) {
-            long start = System.currentTimeMillis();
             int to = chooseTarget();
-            while (true) {
-                if (System.currentTimeMillis() - start >= 5000) break;
-                synchronized (board) {
-                    while (!board.free) board.wait();
-                    board.free = false;
-                    try {
+            synchronized (board) {
+                try {
+                    if (board.tryMakeStep(cur, to)) {
+                        cur = to;
+                        return;
+                    } else {
+                        board.wait(5000);
                         if (board.tryMakeStep(cur, to)) {
                             cur = to;
                             return;
                         }
-                    } finally {
-                        board.free = true;
-                        board.notify();
                     }
+                } finally {
+                    board.notify();
                 }
             }
         }
     }
+
+//    private void makeStep() throws InterruptedException {
+//        while (true) {
+//            long start = T.currentTimeMillis();
+//            int to = chooseTarget();
+//            while (true) {
+//                if (T.currentTimeMillis() - start >= 5000) break;
+//                synchronized (board) {
+//                    while (!board.free) board.wait();
+//                    board.free = false;
+//                    try {
+//                        if (board.tryMakeStep(cur, to)) {
+//                            cur = to;
+//                            return;
+//                        }
+//                    } finally {
+//                        board.free = true;
+//                        board.notify();
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     @Override
     public void run() {
@@ -93,6 +117,16 @@ class Chessman implements Runnable {
             }
         }
     }
+}
+
+class T {
+    static volatile int n = 0;
+
+    static long currentTimeMillis() {
+        n++;
+        return System.currentTimeMillis();
+    }
+
 }
 
 class Pos {
@@ -161,7 +195,7 @@ class Board {
         chessmen.set(to);
         assert to != from;
         assert chessmen.cardinality() == NUM;
-        print(from);
+        print(from, to);
         return true;
     }
 
@@ -173,26 +207,29 @@ class Board {
         return ret;
     }
 
-    public void print(int mark) {
+    void print() {
+        print(-1, -1);
+    }
+
+    void print(int from, int to) {
         StringBuilder sb = new StringBuilder();
         char rook = '♜';
 
         for (int r = ROWS - 1; r >= 0; r--) {
             sb.append(r);
-            for (int c = 0; c < COLS; c++) {
+            for (int ind, c = 0; c < COLS; c++) {
+                ind = posToInd(r, c);
                 sb.append('|');
-                if (chessmen.get(posToInd(r, c)))
-                    sb.append(posToInd(r, c) < 10 ? " " + posToInd(r, c) : posToInd(r, c));
-                else if (mark == posToInd(r, c)) sb.append("..");
+                if (ind == to) sb.append("\u001B[34m").append(to < 10 ? " " + to : to).append("\u001B[0m");
+                else if (chessmen.get(ind)) sb.append(ind < 10 ? " " + ind : ind);
+                else if (ind == from) sb.append("..");
                 else sb.append("  ");
             }
             sb.append('|').append(r).append('\n');
 
         }
         sb.append("  ");
-        for (int i = 0; i < COLS; i++) {
-            sb.append(i).append("  ");
-        }
+        for (int i = 0; i < COLS; i++) sb.append(i).append("  ");
 
         System.out.println(sb.toString());
     }
