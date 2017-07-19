@@ -1,0 +1,28 @@
+<!doctype html>
+<html ng-app="demo">
+<head>
+    <title>DoubleData Danichev</title>
+    <script src="lib/angular.js"></script>
+    <script src="lib/angular-cookies.js"></script>
+    <script src="controllers/controller.js"></script>
+</head>
+
+<body>
+<div ng-controller="Hello">
+    <h1>Calc hash</h1>
+    <form method="post" action="/calchash/file" enctype="multipart/form-data">
+        <label>src</label>
+        <input type="text" name="algo" value="sha-256"/>
+        <br/>
+        <br/>
+        <input type="file" name="file"/>
+        <input type="submit"/>
+    </form>
+    <footer>
+        <div layout="row" layout-align="center center">
+            <h3>{{userid}}</h3>
+        </div>
+    </footer>
+</div>
+</body>
+</html>
