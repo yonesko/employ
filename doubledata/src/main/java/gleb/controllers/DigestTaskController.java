@@ -1,14 +1,13 @@
 package gleb.controllers;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/digesttask")
@@ -21,7 +20,14 @@ public class DigestTaskController {
         return String.valueOf(encodeHex(digest));
     }
 
-
+    @ResponseBody()
+    @PutMapping("/add")
+    public Map<String, String> addTask(@RequestParam("src") String src, @RequestParam("algo") String algo) {
+        Map<String, String> r = new HashMap<>();
+        r.put("statusR", "OK");
+        System.out.println(src);
+        return r;
+    }
 
     private static char[] encodeHex(byte[] bytes) {
         char chars[] = new char[32];

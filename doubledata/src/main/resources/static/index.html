@@ -23,14 +23,16 @@
     <section layout="row" layout-sm="column" layout-align="center center" layout-wrap>
         <md-input-container>
             <label>Src</label>
-            <input type="text" ng-model="user.name">
+            <input type="text" ng-model="newTask.src">
         </md-input-container>
         <md-input-container>
             <label>Algo</label>
-            <input type="text" value="md5" ng-model="user.name">
+            <input type="text" value="md5" ng-model="newTask.algo">
         </md-input-container>
-        <md-button md-no-ink class="md-primary">Add Task</md-button>
+        <ng-click ng-click="addTask(newTask)"><md-button md-no-ink class="md-primary">Add Task</md-button></ng-click>
     </section>
+
+    {{status}}
 
 
     <footer>
