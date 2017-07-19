@@ -11,16 +11,17 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 @RestController
-@RequestMapping("/calchash")
-public class DiegestController {
+@RequestMapping("/digesttask")
+public class DigestTaskController {
     private static final char[] HEX_CHARS =
             {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
-    @PostMapping("/file")
     public String calcHash(@RequestParam("algo") String algo, @RequestParam("file") MultipartFile file) throws IOException, NoSuchAlgorithmException {
         byte[] digest = MessageDigest.getInstance(algo).digest(file.getBytes());
         return String.valueOf(encodeHex(digest));
     }
+
+
 
     private static char[] encodeHex(byte[] bytes) {
         char chars[] = new char[32];
