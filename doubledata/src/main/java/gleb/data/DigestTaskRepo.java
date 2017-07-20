@@ -1,10 +1,9 @@
 package gleb.data;
 
 import gleb.model.Task;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.Map;
-import java.util.UUID;
-
-public class DigestTaskRepo {
-    private Map<UUID, Map<Integer, Task>> usersTasks;
+@Repository
+public interface DigestTaskRepo extends CrudRepository<Task, Long> {
 }
