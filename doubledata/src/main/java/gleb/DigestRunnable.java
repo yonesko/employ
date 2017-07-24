@@ -3,12 +3,11 @@ package gleb;
 import java.io.InputStream;
 import java.net.URL;
 import java.security.MessageDigest;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class DigestRunnable implements Runnable {
-
-    private final Task task;
-
     private TaskRepo taskRepo;
+    private Task task;
 
     public DigestRunnable(Task task, TaskRepo taskRepo) {
         this.task = task;

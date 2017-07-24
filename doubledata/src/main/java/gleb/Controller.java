@@ -13,8 +13,8 @@ public class Controller {
 
     @Autowired
     private TaskRepo taskRepo;
-
-    private Executor executor = Executors.newFixedThreadPool(2);
+    @Autowired
+    private Executor executor = new MyExecutor();
 
     @PutMapping
     void add(@RequestParam("src") String src, @RequestParam("algo") String algo) {
@@ -34,7 +34,6 @@ public class Controller {
     List<Task> getAll() {
         return taskRepo.getAll();
     }
-
 
 
 }
