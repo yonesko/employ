@@ -6,15 +6,26 @@ angular.module('myapp', []).controller("myctrl", function ($scope, $http) {
         return defaults.concat(transform);
     }
 
-    function transformToTaskMap(value) {
+    function transformTasks(value) {
         map = {};
 
         angular.forEach(value, function (v, k) {
+            v.elapsedSeconds = Number.parseInt(Date.now() / 1000 - v.received.epochSecond);
             map[v.id] = v;
         });
 
         return map
     }
+
+    $scope.tasksToArr = function (tasks) {
+        var arr = [];
+
+        angular.forEach(tasks, function (taks, id) {
+            arr.push(taks)
+        });
+
+        return arr
+    };
 
     $scope.add = function (task) {
         $http({
@@ -37,38 +48,20 @@ angular.module('myapp', []).controller("myctrl", function ($scope, $http) {
         });
     };
 
-    $http({
-        method: "GET",
-        url: "/task",
-        transformResponse: appendTransform($http.defaults.transformResponse, transformToTaskMap)
-    }).then(function successCallback(response) {
-        $scope.tasks = response.data
-    }, function errorCallback(response) {
-        console.error(response)
-    });
+    function refresh() {
+        $http({
+            method: "GET",
+            url: "/task",
+            transformResponse: appendTransform($http.defaults.transformResponse, transformTasks)
+        }).then(function successCallback(response) {
+            $scope.tasks = response.data
+        }, function errorCallback(response) {
+            console.error(response);
+            clearInterval(intervalID)
+        });
+    }
 
-    var eventSource = new EventSource('/task/event');
+    intervalID = setInterval(refresh, 200)
 
-    eventSource.onopen = function (e) {
-        console.log("SSE Open");
-    };
-
-    eventSource.onerror = function (e) {
-        if (this.readyState === EventSource.CONNECTING) {
-            console.log("SSE Connection end, retry");
-        } else {
-            console.log("SSE Error: " + this.readyState);
-        }
-    };
-
-    eventSource.addEventListener("ADD", function (e) {
-        var task = angular.fromJson(e.data);
-        $scope.tasks[task.id] = task;
-        $scope.$apply()
-    });
-    eventSource.addEventListener("DELETE", function (e) {
-        delete $scope.tasks[angular.fromJson(e.data)];
-        $scope.$apply()
-    });
 
 });

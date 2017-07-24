@@ -15,14 +15,14 @@ public class DemoApplication {
 
     @Bean
     TaskRepo taskRepo() {
-        return new TaskRepoSimpleList();
+        return new TaskRepoOnMap();
     }
 
-    @Bean
+//    @Bean
     CommandLineRunner initData(TaskRepo taskRepo) {
         return args -> {
-            taskRepo.add(new Task("Yandex", "MD5"));
-            taskRepo.add(new Task("Rambler", "SHA256"));
+            taskRepo.save(new Task("Yandex", "MD5"));
+            taskRepo.save(new Task("Rambler", "SHA256"));
         };
     }
 }

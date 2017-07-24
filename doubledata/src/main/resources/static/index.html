@@ -6,9 +6,9 @@
           href="https://ajax.googleapis.com/ajax/libs/angular_material/0.11.2/angular-material.min.css">
 
     <!-- AngularJS Material Dependencies -->
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-animate.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-aria.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-animate.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-aria.min.js"></script>
 
 
     <!-- AngularJS Material Javascript now available via Google CDN; version 1.0.7 used here -->
@@ -17,14 +17,29 @@
 </head>
 <body ng-controller="myctrl">
 
-<ul>
-    <li ng-repeat="(id, task) in tasks">
-        {{id}}
-        {{task.src}}
-        {{task.algo}}
-        <button ng-click="remove(id)">Remove</button>
-    </li>
-</ul>
+<table border="1">
+    <caption>Digest Tasks</caption>
+    <tr>
+        <th>Id</th>
+        <th>Src</th>
+        <th>Algo</th>
+        <th>Status</th>
+        <th>Info</th>
+    </tr>
+    <tr ng-repeat="task in tasksToArr(tasks) | orderBy:'id'">
+        <td>{{task.id}}</td>
+        <td>{{task.src}}</td>
+        <td>{{task.algo}}</td>
+        <td>{{task.status}}</td>
+        <td><span ng-switch on="task.status">
+            <span ng-switch-when="OK|ERR" ng-switch-when-separator="|">{{task.statusPayload}}</span>
+            <span ng-switch-when="WAIT|PROCCESS" ng-switch-when-separator="|">{{task.elapsedSeconds}} seconds</span>
+        </span></td>
+        <td>
+            <button ng-click="remove(task.id)">Remove</button>
+        </td>
+    </tr>
+</table>
 
 <form ng-init="newTask = {src:'Sittte', algo:'KrutoiAlgo'}">
     <label>Src

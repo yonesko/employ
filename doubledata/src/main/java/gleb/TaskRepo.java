@@ -3,11 +3,13 @@ package gleb;
 import java.util.List;
 
 public interface TaskRepo {
-    void add(Task task);
+    void save(Task task);
 
-    void delete(Task task);
+    boolean update(Task task);
 
     void delete(int id);
 
     List<Task> getAll();
+
+//    Task getById(int id);
 }
