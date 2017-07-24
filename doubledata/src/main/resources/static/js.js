@@ -59,6 +59,7 @@ angular.module('myapp', []).controller("myctrl", function ($scope, $http) {
             console.error(response);
             clearInterval(intervalID)
         });
+        $scope.$apply()
     }
 
     intervalID = setInterval(refresh, 200)

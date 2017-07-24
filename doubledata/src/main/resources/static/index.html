@@ -17,6 +17,16 @@
 </head>
 <body ng-controller="myctrl">
 
+
+<form ng-init="newTask = {src:'Sittte', algo:'KrutoiAlgo'}">
+    <label>Src
+        <input type="text" ng-model="newTask.src"/>
+    </label>
+    <label>Algo
+        <input type="text" ng-model="newTask.algo"/>
+    </label>
+    <button ng-click="add(newTask)">ADD</button>
+</form>
 <table border="1">
     <caption>Digest Tasks</caption>
     <tr>
@@ -40,16 +50,6 @@
         </td>
     </tr>
 </table>
-
-<form ng-init="newTask = {src:'Sittte', algo:'KrutoiAlgo'}">
-    <label>Src
-        <input type="text" ng-model="newTask.src"/>
-    </label>
-    <label>Algo
-        <input type="text" ng-model="newTask.algo"/>
-    </label>
-    <button ng-click="add(newTask)">ADD</button>
-</form>
 
 
 </body>

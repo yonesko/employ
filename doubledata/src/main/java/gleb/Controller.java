@@ -14,7 +14,7 @@ public class Controller {
     @Autowired
     private TaskRepo taskRepo;
     @Autowired
-    private Executor executor = new MyExecutor();
+    private Executor executor;
 
     @PutMapping
     void add(@RequestParam("src") String src, @RequestParam("algo") String algo) {
