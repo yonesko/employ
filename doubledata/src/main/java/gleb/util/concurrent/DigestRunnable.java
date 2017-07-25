@@ -1,9 +1,12 @@
-package gleb;
+package gleb.util.concurrent;
+
+import gleb.data.TaskRepo;
+import gleb.data.model.Task;
+import gleb.util.Util;
 
 import java.io.InputStream;
 import java.net.URL;
 import java.security.MessageDigest;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class DigestRunnable implements Runnable {
     private TaskRepo taskRepo;
@@ -18,7 +21,7 @@ public class DigestRunnable implements Runnable {
     public void run() {
         //imitate wait
         try {
-            Thread.sleep(2000);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

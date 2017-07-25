@@ -1,4 +1,6 @@
-package gleb;
+package gleb.data;
+
+import gleb.data.model.Task;
 
 import java.util.List;
 
@@ -10,6 +12,4 @@ public interface TaskRepo {
     void delete(int id);
 
     List<Task> getAll();
-
-//    Task getById(int id);
 }

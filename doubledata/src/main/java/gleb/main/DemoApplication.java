@@ -1,5 +1,8 @@
-package gleb;
+package gleb.main;
 
+import gleb.data.TaskRepo;
+import gleb.data.TaskRepoOnMap;
+import gleb.util.concurrent.TimeAndParallerLimitExecutor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +23,6 @@ public class DemoApplication {
 
     @Bean
     Executor myExecutor() {
-        return new MyExecutor();
+        return new TimeAndParallerLimitExecutor();
     }
 }

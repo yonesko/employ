@@ -46,6 +46,7 @@ angular.module('myapp', []).controller("myctrl", function ($scope, $http) {
                 id: id
             }
         });
+        refresh();
     };
 
     function refresh() {
@@ -54,12 +55,11 @@ angular.module('myapp', []).controller("myctrl", function ($scope, $http) {
             url: "/task",
             transformResponse: appendTransform($http.defaults.transformResponse, transformTasks)
         }).then(function successCallback(response) {
-            $scope.tasks = response.data
+            $scope.tasks = response.data;
         }, function errorCallback(response) {
             console.error(response);
             clearInterval(intervalID)
         });
-        $scope.$apply()
     }
 
     intervalID = setInterval(refresh, 200)

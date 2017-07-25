@@ -1,4 +1,4 @@
-package gleb;
+package gleb.data.model;
 
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -66,7 +66,7 @@ public class Task {
                 '}';
     }
 
-    enum Status {
+    public enum Status {
         WAIT, PROCCESS, OK, ERR
     }
 }

@@ -1,4 +1,4 @@
-package gleb;
+package gleb.util;
 
 public class Util {
     private final static char[] hexArray = "0123456789ABCDEF".toCharArray();

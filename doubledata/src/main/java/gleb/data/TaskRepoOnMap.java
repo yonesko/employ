@@ -1,4 +1,6 @@
-package gleb;
+package gleb.data;
+
+import gleb.data.model.Task;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +8,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class TaskRepoOnMap implements TaskRepo {
-    Map<Integer, Task> taskTable = new ConcurrentHashMap<>();
+    private Map<Integer, Task> taskTable = new ConcurrentHashMap<>();
 
     public void save(Task task) {
         taskTable.put(task.getId(), task);
@@ -38,11 +40,5 @@ public class TaskRepoOnMap implements TaskRepo {
     public List<Task> getAll() {
         return new ArrayList<>(taskTable.values());
     }
-
-//    @Override
-//    public Task getById(int id) {
-//        return taskTable.get(id);
-//    }
-
 
 }

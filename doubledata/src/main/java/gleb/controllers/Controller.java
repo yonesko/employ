@@ -1,11 +1,13 @@
-package gleb;
+package gleb.controllers;
 
+import gleb.util.concurrent.DigestRunnable;
+import gleb.data.model.Task;
+import gleb.data.TaskRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 @RestController
 @RequestMapping("/task")
