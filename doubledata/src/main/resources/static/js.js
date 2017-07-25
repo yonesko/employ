@@ -62,7 +62,6 @@ angular.module('myapp', []).controller("myctrl", function ($scope, $http) {
         });
     }
 
-    intervalID = setInterval(refresh, 200)
-
-
+    intervalID = setInterval(refresh, 200);
+    $scope.userid = document.cookie
 });

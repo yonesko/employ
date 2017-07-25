@@ -10,11 +10,13 @@ import java.security.MessageDigest;
 
 public class DigestRunnable implements Runnable {
     private TaskRepo taskRepo;
+    private String userid;
     private Task task;
 
-    public DigestRunnable(Task task, TaskRepo taskRepo) {
-        this.task = task;
+    public DigestRunnable(TaskRepo taskRepo, String userid, Task task) {
         this.taskRepo = taskRepo;
+        this.userid = userid;
+        this.task = task;
     }
 
     @Override
@@ -27,7 +29,7 @@ public class DigestRunnable implements Runnable {
         }
 
         task.setStatus(Task.Status.PROCCESS);
-        if (!taskRepo.update(task)) {
+        if (!taskRepo.update(userid, task)) {
             System.out.println(String.format("Task %s has been deleted, stop processing", task));
             return;
         }
@@ -50,7 +52,7 @@ public class DigestRunnable implements Runnable {
             task.setStatusPayload(e.toString());
         }
 
-        if (!taskRepo.update(task)) {
+        if (!taskRepo.update(userid, task)) {
             System.out.println(String.format("Task %s has been deleted, stop processing", task));
         }
     }
