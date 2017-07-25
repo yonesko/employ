@@ -4,6 +4,7 @@
     <!-- AngularJS Material CSS now available via Google CDN; version 1.0.7 used here -->
     <link rel="stylesheet"
           href="https://ajax.googleapis.com/ajax/libs/angular_material/0.11.2/angular-material.min.css">
+    <link rel="stylesheet" href="css.css">
 
     <!-- AngularJS Material Dependencies -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
@@ -13,10 +14,15 @@
 
     <!-- AngularJS Material Javascript now available via Google CDN; version 1.0.7 used here -->
     <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.7/angular-material.min.js"></script>
+    <script src="ng-file-upload-all.js"></script>
     <script src="js.js"></script>
 </head>
 <body ng-controller="myctrl">
 
+<button type="file" ngf-select="uploadFiles($file, $invalidFiles)"
+        ngf-max-height="1000" ngf-max-size="1MB">
+    Select Src List
+</button>
 
 <form ng-init="newTask = {src:'http://yandex.ru', algo:'MD5'}">
     <label>Src

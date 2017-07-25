@@ -1,4 +1,4 @@
-angular.module('myapp', []).controller("myctrl", function ($scope, $http) {
+angular.module('myapp', ['ngFileUpload']).controller("myctrl", ['$scope', '$http', 'Upload', function ($scope, $http, Upload) {
     function appendTransform(defaults, transform) {
         // We can't guarantee that the default transformation is an array
         defaults = angular.isArray(defaults) ? defaults : [defaults];
@@ -63,5 +63,25 @@ angular.module('myapp', []).controller("myctrl", function ($scope, $http) {
     }
 
     intervalID = setInterval(refresh, 200);
-    $scope.userid = document.cookie
-});
+    $scope.userid = document.cookie;
+
+    $scope.uploadFiles = function (file, errFiles) {
+        $scope.f = file;
+        if (file) {
+            file.upload = Upload.upload({
+                url: '/task',
+                data: {file: file}
+            });
+
+            file.upload.then(
+                function (response) {
+                },
+                function (response) {
+                    if (response.status > 0)
+                        alert(response.status + ': ' + response.data)
+                }, function (evt) {
+                });
+        }
+    }
+
+}]);
