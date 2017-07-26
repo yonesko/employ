@@ -21,7 +21,7 @@ public class DigestRunnable implements Runnable {
 
     @Override
     public void run() {
-        task.setStatus(Task.Status.PROCCESS);
+        task.setStatus(Task.Status.PROCESS);
         if (!taskRepo.update(userid, task)) {
             System.out.println(String.format("Task %s has been deleted, stop processing", task));
             return;

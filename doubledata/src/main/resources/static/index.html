@@ -48,7 +48,7 @@
         <td>{{task.status}}</td>
         <td><span ng-switch on="task.status">
             <span ng-switch-when="OK|ERR" ng-switch-when-separator="|">{{task.statusPayload}}</span>
-            <span ng-switch-when="WAIT|PROCCESS" ng-switch-when-separator="|">{{task.elapsedSeconds}} seconds</span>
+            <span ng-switch-when="WAIT|PROCESS" ng-switch-when-separator="|">{{task.elapsedSeconds}} seconds</span>
         </span></td>
         <td>
             <button ng-click="remove(task.id)">Remove</button>

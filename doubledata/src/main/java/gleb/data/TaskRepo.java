@@ -5,11 +5,11 @@ import gleb.data.model.Task;
 import java.util.List;
 
 public interface TaskRepo {
-    void save(String userid, Task task);
+    void save(String userId, Task task);
 
-    boolean update(String userid,Task task);
+    boolean update(String userId, Task task);
 
-    void delete(String userid,int id);
+    void delete(String userId, int id);
 
-    List<Task> getAll(String userid);
+    List<Task> getAll(String userId);
 }

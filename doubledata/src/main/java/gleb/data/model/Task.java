@@ -22,10 +22,6 @@ public class Task {
         received = Instant.now();
     }
 
-    public Instant getReceived() {
-        return received;
-    }
-
     public void setStatus(Status status) {
         this.status = status;
     }
@@ -67,6 +63,6 @@ public class Task {
     }
 
     public enum Status {
-        WAIT, PROCCESS, OK, ERR
+        WAIT, PROCESS, OK, ERR
     }
 }
