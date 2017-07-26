@@ -39,6 +39,7 @@ angular.module('myapp', ['ngFileUpload']).controller("myctrl", ['$scope', '$http
     };
 
     $scope.remove = function (id) {
+        delete $scope.tasks[id];
         $http({
             method: "DELETE",
             url: "/task",
@@ -46,7 +47,6 @@ angular.module('myapp', ['ngFileUpload']).controller("myctrl", ['$scope', '$http
                 id: id
             }
         });
-        refresh();
     };
 
     function refresh() {

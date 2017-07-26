@@ -24,31 +24,32 @@ public class DemoApplicationTests {
     @Autowired
     private MockMvc mockMvc;
 
-    private Cookie user1 = new Cookie(UserIdFilter.USERID, "userid1"),
-            user2 = new Cookie(UserIdFilter.USERID, "userid2");
+    private Cookie users[] = {new Cookie(UserIdFilter.USERID, "userid1"), new Cookie(UserIdFilter.USERID, "userid2")};
 
     @Test
     public void taskAdd() throws Exception {
         Task task = new Task("http://google.com", "MD5");
 
         final int tasknum = 7;
-        for (int i = 0; i < tasknum; i++) {
-            mockMvc.perform(put("/task")
-                    .param("src", task.getSrc())
-                    .param("algo", task.getAlgo())
-                    .cookie(user1))
-                    .andExpect(status().isOk());
+        for (Cookie user : users) {
+            for (int i = 0; i < tasknum; i++) {
+                mockMvc.perform(put("/task")
+                        .param("src", task.getSrc())
+                        .param("algo", task.getAlgo())
+                        .cookie(user))
+                        .andExpect(status().isOk());
+            }
         }
 
-        mockMvc.perform(get("/task").cookie(user1)).andExpect(jsonPath("$.length()", "").value(tasknum));
+        for (Cookie user : users) {
+            mockMvc.perform(get("/task").cookie(user)).andExpect(jsonPath("$.length()", "").value(tasknum));
 
-        for (int i = 0; i < tasknum; i++) {
-            mockMvc.perform(get("/task").cookie(user1)).andExpect(jsonPath("$[%d].src", i).value(task.getSrc()));
-            mockMvc.perform(get("/task").cookie(user1)).andExpect(jsonPath("$[%d].algo", i).value(task.getAlgo()));
-            mockMvc.perform(get("/task").cookie(user1)).andExpect(jsonPath("$[%d].status", i).value(task.getStatus().name()));
-            mockMvc.perform(get("/task").cookie(user1)).andExpect(jsonPath("$[%d].statusPayload", i).isEmpty());
+            for (int i = 0; i < tasknum; i++) {
+                mockMvc.perform(get("/task").cookie(user)).andExpect(jsonPath("$[%d].src", i).value(task.getSrc()));
+                mockMvc.perform(get("/task").cookie(user)).andExpect(jsonPath("$[%d].algo", i).value(task.getAlgo()));
+                mockMvc.perform(get("/task").cookie(user)).andExpect(jsonPath("$[%d].status", i).value(task.getStatus().name()));
+                mockMvc.perform(get("/task").cookie(user)).andExpect(jsonPath("$[%d].statusPayload", i).isEmpty());
+            }
         }
     }
-
-
 }

@@ -15,7 +15,6 @@ import java.util.concurrent.Executor;
 @RestController
 @RequestMapping("/task")
 public class DigestTaskController {
-
     public static final String ALGO_DEFAULT = "MD5";
     @Autowired
     private TaskRepo taskRepo;
