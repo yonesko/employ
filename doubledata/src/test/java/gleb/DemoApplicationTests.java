@@ -1,17 +1,14 @@
 package gleb;
 
 import gleb.data.model.Task;
-import gleb.main.DemoApplication;
 import gleb.web.UserIdFilter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import javax.servlet.http.Cookie;
 
@@ -27,34 +24,31 @@ public class DemoApplicationTests {
     @Autowired
     private MockMvc mockMvc;
 
-    //    @Before
-    void init() {
-        mockMvc = MockMvcBuilders.standaloneSetup().defaultRequest(MockHttpServletRequest::new).build();
-    }
+    private Cookie user1 = new Cookie(UserIdFilter.USERID, "userid1"),
+            user2 = new Cookie(UserIdFilter.USERID, "userid2");
 
     @Test
     public void taskAdd() throws Exception {
         Task task = new Task("http://google.com", "MD5");
-        Cookie cookie = new Cookie(UserIdFilter.USERID, "userid1");
 
         final int tasknum = 7;
         for (int i = 0; i < tasknum; i++) {
             mockMvc.perform(put("/task")
                     .param("src", task.getSrc())
                     .param("algo", task.getAlgo())
-                    .cookie(cookie))
+                    .cookie(user1))
                     .andExpect(status().isOk());
         }
 
-        mockMvc.perform(get("/task").cookie(cookie)).andExpect(jsonPath("$.length()", "").value(tasknum));
+        mockMvc.perform(get("/task").cookie(user1)).andExpect(jsonPath("$.length()", "").value(tasknum));
 
         for (int i = 0; i < tasknum; i++) {
-            mockMvc.perform(get("/task").cookie(cookie)).andExpect(jsonPath("$[%d].src", i).value(task.getSrc()));
-            mockMvc.perform(get("/task").cookie(cookie)).andExpect(jsonPath("$[%d].algo", i).value(task.getAlgo()));
-            mockMvc.perform(get("/task").cookie(cookie)).andExpect(jsonPath("$[%d].status", i).value(task.getStatus().name()));
-            mockMvc.perform(get("/task").cookie(cookie)).andExpect(jsonPath("$[%d].statusPayload", i).isEmpty());
+            mockMvc.perform(get("/task").cookie(user1)).andExpect(jsonPath("$[%d].src", i).value(task.getSrc()));
+            mockMvc.perform(get("/task").cookie(user1)).andExpect(jsonPath("$[%d].algo", i).value(task.getAlgo()));
+            mockMvc.perform(get("/task").cookie(user1)).andExpect(jsonPath("$[%d].status", i).value(task.getStatus().name()));
+            mockMvc.perform(get("/task").cookie(user1)).andExpect(jsonPath("$[%d].statusPayload", i).isEmpty());
         }
-
     }
+
 
 }
