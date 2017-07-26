@@ -15,7 +15,6 @@ import java.util.concurrent.Executor;
 
 @SpringBootApplication
 @ComponentScan("gleb.web")
-@PropertySource("classpath:app.properties")
 public class DemoApplication {
     @Autowired
     Environment env;
