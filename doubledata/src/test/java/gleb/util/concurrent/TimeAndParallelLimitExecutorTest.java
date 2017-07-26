@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.LockSupport;
 
-public class TimeAndParallerLimitExecutorTest {
+public class TimeAndParallelLimitExecutorTest {
     public static final int N_THREADS = 4;
     public static final int TIME_PERIOD = 1;
     public static final int LIMIT_OF_TIME_PERIOD = 7;
@@ -17,7 +17,7 @@ public class TimeAndParallerLimitExecutorTest {
 
     @Before
     public void init() {
-        executor = new TimeAndParallerLimitExecutor(N_THREADS, TIME_PERIOD, LIMIT_OF_TIME_PERIOD);
+        executor = new TimeAndParallelLimitExecutor(N_THREADS, TIME_PERIOD, LIMIT_OF_TIME_PERIOD);
     }
 
     @Test

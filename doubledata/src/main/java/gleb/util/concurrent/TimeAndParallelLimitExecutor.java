@@ -7,26 +7,27 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 import java.util.concurrent.*;
 
 @ManagedResource
-public class TimeAndParallerLimitExecutor implements Executor {
+public class TimeAndParallelLimitExecutor implements Executor {
     private Executor executor;
     private TimedSemaphore timedSemaphore;
 
-    private BlockingQueue<Runnable> queue = new LinkedBlockingDeque<>();
+    private BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
 
-    public TimeAndParallerLimitExecutor(int nThreads, int timePeriod, int limitOfTimePeriod) {
+    public TimeAndParallelLimitExecutor(int nThreads, int timePeriod, int limitOfTimePeriod) {
         executor = Executors.newFixedThreadPool(nThreads);
         timedSemaphore = new TimedSemaphore(timePeriod, TimeUnit.SECONDS, limitOfTimePeriod);
 
         Thread t = new Thread(() -> {
             while (true) {
                 try {
+                    Runnable take = queue.take();
                     timedSemaphore.acquire();
-                    executor.execute(queue.take());
+                    executor.execute(take);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-        }, "TimeAndParallerLimitExecutor task executor thread");
+        }, "TimeAndParallelLimitExecutor task executor thread");
         t.setDaemon(true);
         t.start();
     }

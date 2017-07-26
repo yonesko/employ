@@ -2,7 +2,7 @@ package gleb;
 
 import gleb.data.TaskRepo;
 import gleb.data.TaskRepoSimple;
-import gleb.util.concurrent.TimeAndParallerLimitExecutor;
+import gleb.util.concurrent.TimeAndParallelLimitExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -29,7 +29,7 @@ public class DemoApplication {
 
     @Bean
     Executor myExecutor() {
-        return new TimeAndParallerLimitExecutor(Integer.valueOf(env.getProperty("timeAndParallelLimitExecutor.threadsInPool")),
+        return new TimeAndParallelLimitExecutor(Integer.valueOf(env.getProperty("timeAndParallelLimitExecutor.threadsInPool")),
                 Integer.valueOf(env.getProperty("timeAndParallelLimitExecutor.timePeriodSeconds")),
                 Integer.valueOf(env.getProperty("timeAndParallelLimitExecutor.limitOfTimePeriod")));
     }
