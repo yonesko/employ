@@ -30,6 +30,10 @@ public class Task {
         this.statusPayload = statusPayload;
     }
 
+    public Instant getReceived() {
+        return received;
+    }
+
     public Status getStatus() {
         return status;
     }

@@ -47,8 +47,6 @@ public class DemoApplicationTests {
             for (int i = 0; i < tasknum; i++) {
                 mockMvc.perform(get("/task").cookie(user)).andExpect(jsonPath("$[%d].src", i).value(task.getSrc()));
                 mockMvc.perform(get("/task").cookie(user)).andExpect(jsonPath("$[%d].algo", i).value(task.getAlgo()));
-                mockMvc.perform(get("/task").cookie(user)).andExpect(jsonPath("$[%d].status", i).value(task.getStatus().name()));
-                mockMvc.perform(get("/task").cookie(user)).andExpect(jsonPath("$[%d].statusPayload", i).isEmpty());
             }
         }
     }
