@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 
 @RestController
@@ -44,6 +45,17 @@ public class DigestTaskController {
     @GetMapping
     List<Task> getAll(@CookieValue("userid") String userId) {
         return taskRepo.getAll(userId);
+    }
+
+    @GetMapping("big")
+    long[] big() {
+        long r[] = new long[(int) 1e6];
+        Random random = new Random();
+        for (int i = 0; i < r.length; i++) {
+            r[i] = random.nextLong();
+        }
+
+        return r;
     }
 
     private void submit(String userId, String src, String algo) {
