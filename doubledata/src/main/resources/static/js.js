@@ -6,26 +6,13 @@ angular.module('myapp', ['ngFileUpload']).controller("myctrl", ['$scope', '$http
         return defaults.concat(transform);
     }
 
-    function transformTasks(value) {
-        map = {};
-
-        angular.forEach(value, function (v, k) {
+    function transformTasks(values) {
+        angular.forEach(values, function (v, k) {
             v.elapsedSeconds = Number.parseInt(Date.now() / 1000 - v.received.epochSecond);
-            map[v.id] = v;
         });
 
-        return map
+        return values
     }
-
-    $scope.tasksToArr = function (tasks) {
-        var arr = [];
-
-        angular.forEach(tasks, function (taks, id) {
-            arr.push(taks)
-        });
-
-        return arr
-    };
 
     $scope.add = function (task) {
         $http({
@@ -39,7 +26,6 @@ angular.module('myapp', ['ngFileUpload']).controller("myctrl", ['$scope', '$http
     };
 
     $scope.remove = function (id) {
-        delete $scope.tasks[id];
         $http({
             method: "DELETE",
             url: "/task",

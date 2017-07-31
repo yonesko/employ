@@ -10,8 +10,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 
-import java.util.concurrent.Executor;
-
 @SpringBootApplication
 @ComponentScan("gleb.web")
 public class DemoApplication {
@@ -28,7 +26,7 @@ public class DemoApplication {
     }
 
     @Bean
-    Executor myExecutor() {
+    TimeAndParallelLimitExecutor myExecutor() {
         return new TimeAndParallelLimitExecutor(Integer.valueOf(env.getProperty("timeAndParallelLimitExecutor.threadsInPool")),
                 Integer.valueOf(env.getProperty("timeAndParallelLimitExecutor.timePeriodSeconds")),
                 Integer.valueOf(env.getProperty("timeAndParallelLimitExecutor.limitOfTimePeriod")));

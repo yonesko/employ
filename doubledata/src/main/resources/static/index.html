@@ -41,7 +41,7 @@
         <th>Status</th>
         <th>Info</th>
     </tr>
-    <tr ng-repeat="task in tasksToArr(tasks) | orderBy:'id'">
+    <tr ng-repeat="task in tasks | orderBy:'id'">
         <td>{{task.id}}</td>
         <td>{{task.src}}</td>
         <td>{{task.algo}}</td>

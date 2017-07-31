@@ -3,6 +3,7 @@ package gleb.web;
 import gleb.data.TaskRepo;
 import gleb.data.model.Task;
 import gleb.util.concurrent.DigestRunnable;
+import gleb.util.concurrent.TimeAndParallelLimitExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,7 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
-import java.util.concurrent.Executor;
 
 @RestController
 @RequestMapping("/task")
@@ -19,38 +19,38 @@ public class DigestTaskController {
     @Autowired
     private TaskRepo taskRepo;
     @Autowired
-    private Executor executor;
+    private TimeAndParallelLimitExecutor executor;
 
     @PutMapping
-    void add(@CookieValue("userid") String userid, @RequestParam("src") String src, @RequestParam("algo") String algo) {
-        submit(userid, src, algo);
+    void add(@CookieValue("userid") String userId, @RequestParam("src") String src, @RequestParam("algo") String algo) {
+        submit(userId, src, algo);
     }
 
     @PostMapping
-    void handleFileUpload(@CookieValue("userid") String userid, MultipartFile file) throws IOException {
+    void handleFileUpload(@CookieValue("userid") String userId, MultipartFile file) throws IOException {
         if (!file.isEmpty()) {
             Scanner scanner = new Scanner(file.getInputStream());
             while (scanner.hasNext()) {
-                submit(userid, scanner.next(), ALGO_DEFAULT);
+                submit(userId, scanner.next(), ALGO_DEFAULT);
             }
         }
     }
 
     @DeleteMapping
-    void delete(@CookieValue("userid") String userid, @RequestParam("id") int id) {
-        taskRepo.delete(userid, id);
+    void delete(@CookieValue("userid") String userId, @RequestParam("id") int id) {
+        taskRepo.delete(userId, id);
     }
 
     @GetMapping
-    List<Task> getAll(@CookieValue("userid") String userid) {
-        return taskRepo.getAll(userid);
+    List<Task> getAll(@CookieValue("userid") String userId) {
+        return taskRepo.getAll(userId);
     }
 
-    private void submit(String userid, String src, String algo) {
+    private void submit(String userId, String src, String algo) {
         Task task = new Task(src, algo);
 
-        taskRepo.save(userid, task);
+        taskRepo.save(userId, task);
 
-        executor.execute(new DigestRunnable(taskRepo, userid, task));
+        executor.execute(new DigestRunnable(taskRepo, userId, task));
     }
 }
