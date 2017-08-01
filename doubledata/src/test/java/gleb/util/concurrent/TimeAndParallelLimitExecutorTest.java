@@ -37,10 +37,10 @@ public class TimeAndParallelLimitExecutorTest {
 
     @Test
     public void checkTimed() throws Exception {
-        int bgiEnough = 100, periods = 3;
+        int bigEnough = 100, periods = 3;
         AtomicInteger started = new AtomicInteger(0);
 
-        for (int i = 0; i < bgiEnough; i++) executor.execute(started::incrementAndGet);
+        for (int i = 0; i < bigEnough; i++) executor.execute(started::incrementAndGet);
 
         Thread.sleep(TimeUnit.SECONDS.toMillis(periods * TIME_PERIOD));
         Assert.assertEquals(LIMIT_OF_TIME_PERIOD * periods, started.get());

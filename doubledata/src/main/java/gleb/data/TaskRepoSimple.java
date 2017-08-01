@@ -37,7 +37,7 @@ public class TaskRepoSimple implements TaskRepo {
     }
 
     @Override
-    public List<Task> getAll(String userid) {
+    public synchronized List<Task> getAll(String userid) {
         return new ArrayList<>(taskTable.row(userid).values());
     }
 

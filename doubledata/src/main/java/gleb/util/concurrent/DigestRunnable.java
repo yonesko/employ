@@ -34,9 +34,15 @@ public class DigestRunnable implements Runnable {
             MessageDigest digest = MessageDigest.getInstance(task.getAlgo());
             URL url = new URL(task.getSrc());
 
-            InputStream inputStream = url.openStream();
-            while (inputStream.available() > 0)
-                digest.update((byte) inputStream.read());
+            try (InputStream inputStream = url.openStream()) {
+                long bytes = 0;
+                byte buf[] = new byte[1024];
+
+                for (int n = inputStream.read(buf); n > 0; bytes += n, n = inputStream.read(buf))
+                    digest.update(buf, 0, n);
+
+                System.out.println(String.format("bytes=%d", bytes));
+            }
 
             task.setStatus(Task.Status.OK);
             task.setStatusPayload(Util.bytesToHex(digest.digest()));

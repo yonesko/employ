@@ -49,10 +49,10 @@ public class DigestTaskController {
 
     @GetMapping("big")
     long[] big() {
-        long r[] = new long[(int) 1e6];
+        long r[] = new long[(int) 1e7];
         Random random = new Random();
         for (int i = 0; i < r.length; i++) {
-            r[i] = random.nextLong();
+            r[i] = i;
         }
 
         return r;
