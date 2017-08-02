@@ -3,8 +3,8 @@ package gleb.web;
 import gleb.data.TaskRepo;
 import gleb.data.model.Task;
 import gleb.util.concurrent.DigestRunnable;
+import gleb.util.concurrent.DigestRunnableFactory;
 import gleb.util.concurrent.TimeAndParallelLimitExecutor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,11 +16,16 @@ import java.util.Scanner;
 @RestController
 @RequestMapping("/task")
 public class DigestTaskController {
-    public static final String ALGO_DEFAULT = "MD5";
-    @Autowired
-    private TaskRepo taskRepo;
-    @Autowired
-    private TimeAndParallelLimitExecutor executor;
+    private static final String ALGO_DEFAULT = "MD5";
+    private final TaskRepo taskRepo;
+    private final TimeAndParallelLimitExecutor executor;
+    private final DigestRunnableFactory digestRunnableFactory;
+
+    public DigestTaskController(TaskRepo taskRepo, TimeAndParallelLimitExecutor executor, DigestRunnableFactory digestRunnableFactory) {
+        this.taskRepo = taskRepo;
+        this.executor = executor;
+        this.digestRunnableFactory = digestRunnableFactory;
+    }
 
     @PutMapping
     void add(@CookieValue("userid") String userId, @RequestParam("src") String src, @RequestParam("algo") String algo) {
@@ -63,6 +68,6 @@ public class DigestTaskController {
 
         taskRepo.save(userId, task);
 
-        executor.execute(new DigestRunnable(taskRepo, userId, task));
+        executor.execute(digestRunnableFactory.create(task, userId));
     }
 }
