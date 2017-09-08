@@ -41,12 +41,13 @@ public class DiscreteAuctionTest {
     public void severalResult() throws Exception {
         List<Bid> bids = Arrays.asList(
                 new Bid(1, 120, Direction.B),
-                new Bid(1, 120, Direction.B),
-                new Bid(2, 103, Direction.S));
+                new Bid(4, 120, Direction.B),
+                new Bid(2, 111, Direction.S),
+                new Bid(3, 103, Direction.S));
 
         AuctionResult actualResult = DISCRETE_AUCTION.run(bids);
 
-        assertEquals(new AuctionResult(2, 112), actualResult);
+        assertEquals(new AuctionResult(5, 116), actualResult);
     }
 
     @Test(timeout = 1500)
