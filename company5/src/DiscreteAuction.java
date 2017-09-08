@@ -3,11 +3,12 @@ import java.util.stream.LongStream;
 
 public class DiscreteAuction {
     AuctionResult run(Collection<Bid> bids) {
-        Map<Long, Integer> amounts = new HashMap<>(10000 - 100);
+        Map<Long, Integer> amounts = new HashMap<>(10_000 - 100 + 1);
 
         LongStream.rangeClosed(100, 10_000).forEach(price -> amounts.put(price, amount(bids, price)));
 
-        Optional<Map.Entry<Long, Integer>> max = amounts.entrySet().stream().max(Comparator.comparingInt(Map.Entry::getValue));
+        Optional<Map.Entry<Long, Integer>> max = amounts.entrySet().stream()
+                .max(Comparator.comparingInt(Map.Entry::getValue));
 
         return max
                 .filter(entry -> entry.getValue() > 0)
