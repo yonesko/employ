@@ -22,15 +22,15 @@ public class DiscreteAuction {
     AuctionResult run(Collection<Bid> bids) {
         if (bids.size() == 0) return new AuctionResult(0, 0);
 
-        Map<Long, Integer> possibleRuns = new HashMap<>();
+        Map<Long, Integer> possibleResults = new HashMap<>();
 
         bids.stream().mapToLong(Bid::getPrice).distinct()
-                .forEach(price -> possibleRuns.put(price, amount(bids, price)));
+                .forEach(price -> possibleResults.put(price, amount(bids, price)));
 
-        Map.Entry<Long, Integer> maxAmountEntry = possibleRuns.entrySet().stream()
+        Map.Entry<Long, Integer> maxAmountEntry = possibleResults.entrySet().stream()
                 .max(Comparator.comparingInt(Map.Entry::getValue)).get();
 
-        double price = possibleRuns.entrySet().stream()
+        double price = possibleResults.entrySet().stream()
                 .filter(entry -> Objects.equals(entry.getValue(), maxAmountEntry.getValue()))
                 .mapToLong(Map.Entry::getKey)
                 .average()
