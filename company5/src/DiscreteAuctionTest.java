@@ -14,14 +14,14 @@ public class DiscreteAuctionTest {
         assertEquals(0, actualResult.getAmount());
 
         List<Bid> bids = Arrays.asList(
-                new Bid(100, 1000, Direction.BUY),
-                new Bid(150, 1010, Direction.SELL));
+                new Bid(100, 1000, Direction.B),
+                new Bid(150, 1010, Direction.S));
         actualResult = DISCRETE_AUCTION.run(bids);
         assertEquals(0, actualResult.getAmount());
 
         bids = Arrays.asList(
-                new Bid(100, 1000, Direction.SELL),
-                new Bid(150, 1010, Direction.SELL));
+                new Bid(100, 1000, Direction.S),
+                new Bid(150, 1010, Direction.S));
         actualResult = DISCRETE_AUCTION.run(bids);
         assertEquals(0, actualResult.getAmount());
     }
@@ -29,9 +29,9 @@ public class DiscreteAuctionTest {
     @Test
     public void result() throws Exception {
         List<Bid> bids = Arrays.asList(
-                new Bid(100, 1540, Direction.BUY),
-                new Bid(100, 1530, Direction.BUY),
-                new Bid(150, 1530, Direction.SELL));
+                new Bid(100, 1540, Direction.B),
+                new Bid(100, 1530, Direction.B),
+                new Bid(150, 1530, Direction.S));
         AuctionResult actualResult = DISCRETE_AUCTION.run(bids);
 
         assertEquals(new AuctionResult(150, 1530), actualResult);
@@ -40,9 +40,9 @@ public class DiscreteAuctionTest {
     @Test
     public void severalResult() throws Exception {
         List<Bid> bids = Arrays.asList(
-                new Bid(1, 120, Direction.BUY),
-                new Bid(1, 120, Direction.BUY),
-                new Bid(2, 103, Direction.SELL));
+                new Bid(1, 120, Direction.B),
+                new Bid(1, 120, Direction.B),
+                new Bid(2, 103, Direction.S));
 
         AuctionResult actualResult = DISCRETE_AUCTION.run(bids);
 

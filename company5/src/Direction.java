@@ -1,3 +1,3 @@
 public enum Direction {
-    BUY, SELL;
+    B, S;
 }

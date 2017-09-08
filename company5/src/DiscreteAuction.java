@@ -1,6 +1,24 @@
 import java.util.*;
 
 public class DiscreteAuction {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Collection<Bid> bids = new ArrayList<>();
+
+        while (sc.hasNext()) {
+            String d = sc.next();
+            int amount = sc.nextInt();
+            double price = sc.nextDouble();
+
+            bids.add(new Bid(amount, (long) (price * 100), Direction.valueOf(d)));
+        }
+
+        AuctionResult auctionResult = new DiscreteAuction().run(bids);
+
+        if (auctionResult.getAmount() == 0) System.out.println("0 n/a");
+        else System.out.println(String.format("%d %.2f", auctionResult.getAmount(), auctionResult.getPrice() / 100.));
+    }
+
     AuctionResult run(Collection<Bid> bids) {
         if (bids.size() == 0) return new AuctionResult(0, 0);
 
@@ -25,8 +43,8 @@ public class DiscreteAuction {
         int buyAmount = 0, sellAmount = 0;
 
         for (Bid bid : bids) {
-            if (bid.getDirection() == Direction.BUY && price <= bid.getPrice()) buyAmount += bid.getAmount();
-            if (bid.getDirection() == Direction.SELL && price >= bid.getPrice()) sellAmount += bid.getAmount();
+            if (bid.getDirection() == Direction.B && price <= bid.getPrice()) buyAmount += bid.getAmount();
+            if (bid.getDirection() == Direction.S && price >= bid.getPrice()) sellAmount += bid.getAmount();
         }
 
         return Math.min(buyAmount, sellAmount);
