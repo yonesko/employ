@@ -1,14 +1,12 @@
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 
 public class DiscreteAuctionTest {
-    public static final DiscreteAuction DISCRETE_AUCTION = new DiscreteAuction();
-
+    private static final Random R = new Random();
+    private static final DiscreteAuction DISCRETE_AUCTION = new DiscreteAuction();
 
     @Test
     public void noResult() throws Exception {
@@ -33,4 +31,28 @@ public class DiscreteAuctionTest {
         assertEquals(1530, auctionResult.getPrice());
     }
 
+    @Test
+    public void performance() {
+        int bidsNumber = (int) 1e5;
+        List<Bid> bids = new ArrayList<>(bidsNumber);
+
+        for (int i = 0; i < bidsNumber; i++)
+            bids.add(new Bid(randAmount(), randPrice(), randDirection()));
+
+        long start = System.nanoTime();
+        DISCRETE_AUCTION.run(bids);
+        System.out.println(String.format("ms. per bid:%f", (System.nanoTime() - start) / bidsNumber / 1e6));
+    }
+
+    private int randAmount() {
+        return 1 + R.nextInt(1000);
+    }
+
+    private long randPrice() {
+        return (1 + R.nextInt(100)) * 100;
+    }
+
+    private Direction randDirection() {
+        return Direction.values()[R.nextInt(Direction.values().length)];
+    }
 }
