@@ -1,18 +1,26 @@
 import java.util.*;
+import java.util.stream.LongStream;
 
 public class DiscreteAuction {
     AuctionResult run(Collection<Bid> bids) {
-        Map<Long, Integer> amounts = new HashMap<>();
+        if (bids.size() == 0) return new AuctionResult(0, 0);
 
-        bids.stream().mapToLong(Bid::getPrice).distinct().forEach(price -> amounts.put(price, amount(bids, price)));
+        Map<Long, Integer> possibleAmounts = new HashMap<>();
 
-        Optional<Map.Entry<Long, Integer>> max = amounts.entrySet().stream()
-                .max(Comparator.comparingInt(Map.Entry::getValue));
+        LongStream.rangeClosed(bids.stream().mapToLong(Bid::getPrice).min().getAsLong(),
+                bids.stream().mapToLong(Bid::getPrice).max().getAsLong())
+                .forEach(price -> possibleAmounts.put(price, amount(bids, price)));
 
-        return max
-                .filter(entry -> entry.getValue() > 0)
-                .map(entry -> new AuctionResult(entry.getValue(), entry.getKey()))
-                .orElseGet(() -> new AuctionResult(0, 0));
+        Map.Entry<Long, Integer> maxAmountEntry = possibleAmounts.entrySet().stream()
+                .max(Comparator.comparingInt(Map.Entry::getValue)).get();
+
+        double price = possibleAmounts.entrySet().stream()
+                .filter(entry -> Objects.equals(entry.getValue(), maxAmountEntry.getValue()))
+                .mapToLong(Map.Entry::getKey)
+                .average()
+                .getAsDouble();
+
+        return new AuctionResult(maxAmountEntry.getValue(), (long) Math.ceil(price));
     }
 
     private int amount(Collection<Bid> bids, long price) {

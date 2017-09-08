@@ -10,14 +10,20 @@ public class DiscreteAuctionTest {
 
     @Test
     public void noResult() throws Exception {
-        AuctionResult auctionResult = DISCRETE_AUCTION.run(Collections.emptyList());
-        assertEquals(0, auctionResult.getAmount());
+        AuctionResult actualResult = DISCRETE_AUCTION.run(Collections.emptyList());
+        assertEquals(0, actualResult.getAmount());
 
         List<Bid> bids = Arrays.asList(
                 new Bid(100, 1000, Direction.BUY),
                 new Bid(150, 1010, Direction.SELL));
-        auctionResult = DISCRETE_AUCTION.run(bids);
-        assertEquals(0, auctionResult.getAmount());
+        actualResult = DISCRETE_AUCTION.run(bids);
+        assertEquals(0, actualResult.getAmount());
+
+        bids = Arrays.asList(
+                new Bid(100, 1000, Direction.SELL),
+                new Bid(150, 1010, Direction.SELL));
+        actualResult = DISCRETE_AUCTION.run(bids);
+        assertEquals(0, actualResult.getAmount());
     }
 
     @Test
@@ -26,14 +32,26 @@ public class DiscreteAuctionTest {
                 new Bid(100, 1540, Direction.BUY),
                 new Bid(100, 1530, Direction.BUY),
                 new Bid(150, 1530, Direction.SELL));
-        AuctionResult auctionResult = DISCRETE_AUCTION.run(bids);
-        assertEquals(150, auctionResult.getAmount());
-        assertEquals(1530, auctionResult.getPrice());
+        AuctionResult actualResult = DISCRETE_AUCTION.run(bids);
+
+        assertEquals(new AuctionResult(150, 1530), actualResult);
     }
 
     @Test
+    public void severalResult() throws Exception {
+        List<Bid> bids = Arrays.asList(
+                new Bid(1, 120, Direction.BUY),
+                new Bid(1, 120, Direction.BUY),
+                new Bid(2, 103, Direction.SELL));
+
+        AuctionResult actualResult = DISCRETE_AUCTION.run(bids);
+
+        assertEquals(new AuctionResult(2, 112), actualResult);
+    }
+
+    @Test(timeout = 1500)
     public void performance() {
-        int bidsNumber = (int) 1e5;
+        int bidsNumber = (int) 1e6;
         List<Bid> bids = new ArrayList<>(bidsNumber);
 
         for (int i = 0; i < bidsNumber; i++)
