@@ -1,11 +1,10 @@
 import java.util.*;
-import java.util.stream.LongStream;
 
 public class DiscreteAuction {
     AuctionResult run(Collection<Bid> bids) {
-        Map<Long, Integer> amounts = new HashMap<>(10_000 - 100 + 1);
+        Map<Long, Integer> amounts = new HashMap<>();
 
-        LongStream.rangeClosed(100, 10_000).forEach(price -> amounts.put(price, amount(bids, price)));
+        bids.stream().mapToLong(Bid::getPrice).distinct().forEach(price -> amounts.put(price, amount(bids, price)));
 
         Optional<Map.Entry<Long, Integer>> max = amounts.entrySet().stream()
                 .max(Comparator.comparingInt(Map.Entry::getValue));
@@ -17,15 +16,12 @@ public class DiscreteAuction {
     }
 
     private int amount(Collection<Bid> bids, long price) {
-        int buyAmount = bids.stream()
-                .filter(bid -> bid.getDirection() == Direction.BUY)
-                .filter(bid -> price <= bid.getPrice())
-                .mapToInt(Bid::getAmount).sum();
+        int buyAmount = 0, sellAmount = 0;
 
-        int sellAmount = bids.stream()
-                .filter(bid -> bid.getDirection() == Direction.SELL)
-                .filter(bid -> price >= bid.getPrice())
-                .mapToInt(Bid::getAmount).sum();
+        for (Bid bid : bids) {
+            if (bid.getDirection() == Direction.BUY && price <= bid.getPrice()) buyAmount += bid.getAmount();
+            if (bid.getDirection() == Direction.SELL && price >= bid.getPrice()) sellAmount += bid.getAmount();
+        }
 
         return Math.min(buyAmount, sellAmount);
     }
