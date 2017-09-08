@@ -1,5 +1,4 @@
 import java.util.*;
-import java.util.stream.LongStream;
 
 public class DiscreteAuction {
     AuctionResult run(Collection<Bid> bids) {
@@ -7,8 +6,7 @@ public class DiscreteAuction {
 
         Map<Long, Integer> possibleAmounts = new HashMap<>();
 
-        LongStream.rangeClosed(bids.stream().mapToLong(Bid::getPrice).min().getAsLong(),
-                bids.stream().mapToLong(Bid::getPrice).max().getAsLong())
+        bids.stream().mapToLong(Bid::getPrice).distinct()
                 .forEach(price -> possibleAmounts.put(price, amount(bids, price)));
 
         Map.Entry<Long, Integer> maxAmountEntry = possibleAmounts.entrySet().stream()
